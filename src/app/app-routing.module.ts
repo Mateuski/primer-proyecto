@@ -3,11 +3,12 @@ import { RouterModule, Routes } from '@angular/router';
 import { InicioComponent } from './inicio/inicio.component';
 
 const routes: Routes = [
-{path:"inicio", component: InicioComponent}
+{path:"", component: InicioComponent},
+{path:"", loadChildren:()=>import('./module/inicio/inicio.module').then(m=>m.InicioModule)}
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule] 
 })
 export class AppRoutingModule { }
