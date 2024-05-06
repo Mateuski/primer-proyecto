@@ -1,4 +1,21 @@
-img{
-    width: 350px;
-    margin: 30px;
+.container{
+    display: flex;
+    padding: 10px;
+    justify-content: center;
+}
+
+.contenido{
+width: 300px;
+display: inline-block;
+padding: 15px;
+border-radius: 8px;
+margin: 10px;
+}
+
+h1{
+    text-align: center;
+}
+
+p{
+padding: 5px;
 }

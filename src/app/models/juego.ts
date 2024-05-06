@@ -1,5 +1,8 @@
 export interface Juego {
     id: string;
     nombre: string;
-    precio: number;
+    genero: string;
+    precio: string;
+    imagen: string;
+    alt: string;
 }
