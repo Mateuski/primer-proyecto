@@ -75,5 +75,48 @@ borrarProducto (){
     alert("Ha ocurrido un error al eliminar un producto: \n"+error)
   })
 }
+
+//EDITAR PRODUCTO
+mostrarEditar(productoSeleccionado: Producto){
+  this.productoSeleccionado = productoSeleccionado
+  /*
+  *Tomo los valores del producto seleccionado y los va a
+  *autocompletar en el formulario del modal (menos el ID)
+  */
+  this.producto.setValue({
+    nombre: productoSeleccionado.nombre,
+    precio: productoSeleccionado.precio,
+    descripcion: productoSeleccionado.descripcion,
+    categoria: productoSeleccionado.categoria,
+    imagen: productoSeleccionado.imagen,
+    alt: productoSeleccionado.alt
+  })
+}
+
+//VINCULA A BOTON "editar producto"  del modal de "EDITAR"
+editarProducto(){
+  let datos: Producto = {
+    //Solo idProducto rno se modifica por el usuario
+    idProducto: this.productoSeleccionado.idProducto,
+    /* Los demas atributos reciben nueva info desde el formulario */
+    nombre: this.producto.value.nombre!,
+    precio: this.producto.value.precio!,
+    descripcion: this.producto.value.descripcion!,
+    categoria: this.producto.value.categoria!,
+    imagen: this.producto.value.imagen!,
+    alt: this.producto.value.alt!
+  }
+
+  this.servicioCrud.modificarProducto(this.productoSeleccionado.idProducto, datos)
+  .then(producto=> {
+    alert("El producto se ha modificado con exito");
+
+    // Resetea el formulario y las casillas quedan vacias
+    this.producto.reset();
+  })
+  .catch(error=> {
+    alert("Hubo un problema al modificar el producto \n"+error)
+  })
+}
 }
 

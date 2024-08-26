@@ -45,6 +45,13 @@ export class CrudService {
   }
 
   // EDITAR productos
+  modificarProducto(idProducto: string, nuevaData: Producto){
+    /*
+    Accedemos a la coleccion "productos" de la Base de Datos, buscamos el ID del
+    producto seleccionado y lo actualizamos con el metodo "uptade" enviando la nueva info
+    */
+    return this.database.collection('producto').doc(idProducto).update(nuevaData)
+  }
   // ELIMINAR productos
   eliminarproducto(idProducto:string){
     return new Promise((resolve, reject) => {
