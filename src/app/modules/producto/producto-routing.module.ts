@@ -14,7 +14,7 @@ const routes: Routes = [
     path:"juegos",component:JuegosComponent,
 
   }
-];
+];  
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
