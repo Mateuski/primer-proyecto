@@ -12,8 +12,13 @@ export class TableComponent {
   // Creamos colección local de productos -> la definimos como array
   coleccionProductos: Producto[] = [];
 
-  modalVisibleproducto: boolean=false
-  productoSeleccionado!: Producto
+  modalVisibleproducto: boolean = false
+
+  productoSeleccionado!: Producto // ! <- tomar valores vacios
+
+  nombreImagen!: string;  // obtendra el nombre de la imagen
+
+  imagen!: string;  // obtendra la ruta de la imagen
 
   // Definimos formulario para los productos
   /**
@@ -25,7 +30,7 @@ export class TableComponent {
     precio: new FormControl(0, Validators.required),
     descripcion: new FormControl('', Validators.required),
     categoria: new FormControl('', Validators.required),
-    imagen: new FormControl('', Validators.required),
+    // imagen: new FormControl('', Validators.required),
     alt: new FormControl('', Validators.required)
   })
 
@@ -45,78 +50,119 @@ export class TableComponent {
         precio: this.producto.value.precio!,
         descripcion: this.producto.value.descripcion!,
         categoria: this.producto.value.categoria!,
-        imagen: this.producto.value.imagen!,
+        imagen: '',
         alt: this.producto.value.alt!
       }
 
-      await this.servicioCrud.crearProducto(nuevoProducto)
-        .then(producto => {
-          alert("Ha agregado un nuevo producto con éxito.");
-        })
-        .catch(error => {
-          alert("Ha ocurrido un error al cargar un producto.");
+      /// Enviamos nombre y url de la imagen; definimos carpeta de imagenes como "productos"
+      await this.servicioCrud.subirImagen(this.nombreImagen, this.imagen, "productos")
+        .then(resp => {
+          // encapsulamos respuesta y enviamos la info obtenida
+          this.servicioCrud.obtenerUrlImagen(resp)
+            .then(url => {
+              // Ahora metodo crearProducto recibe datos del formulario y URL creada
+               this.servicioCrud.crearProducto(nuevoProducto, url)
+                .then(producto => {
+                  alert("Ha agregado un nuevo producto con éxito.");
+                })
+                .catch(error => {
+                  alert("Ha ocurrido un error al cargar un producto.");
+                })
+            })
         })
     }
   }
 
-  //funcion vinculada al modal y el boton de la tabla
-mostrarBorrar(productoSeleccionado: Producto){
-  this.modalVisibleproducto = true;
+  // CARGAR IMAGENES
+  cargarImagen(event: any){
+    // Variable para obtener el archivo subido desde el input HTML
+    let archivo = event.target.files[0];
 
-  this.productoSeleccionado = productoSeleccionado;
-}
+    // Variable para crear un nuevo objeto de tipo "archivo" o "file" y leerlo
+    let reader = new FileReader();
 
-borrarProducto (){
-  this.servicioCrud.eliminarproducto(this.productoSeleccionado.idProducto)
-  .then(respuesta => {
-    alert("se ha podido eliminar con exito");
-  })
-  .catch(error => {
-    alert("Ha ocurrido un error al eliminar un producto: \n"+error)
-  })
-}
+    if(archivo != undefined){
+      /* 
+      llamamos a metodo readAsDataURL para leer toda la info recibida
+      Enviamos como parametro al "archivo" porque sera el encargado de tener
+      la info ingresada por el usuario 
+      */
+      reader.readAsDataURL(archivo);
 
-//EDITAR PRODUCTO
-mostrarEditar(productoSeleccionado: Producto){
-  this.productoSeleccionado = productoSeleccionado
-  /*
-  *Tomo los valores del producto seleccionado y los va a
-  *autocompletar en el formulario del modal (menos el ID)
-  */
-  this.producto.setValue({
-    nombre: productoSeleccionado.nombre,
-    precio: productoSeleccionado.precio,
-    descripcion: productoSeleccionado.descripcion,
-    categoria: productoSeleccionado.categoria,
-    imagen: productoSeleccionado.imagen,
-    alt: productoSeleccionado.alt
-  })
-}
+      // Definimos que haremos con la info mediante función flecha
+      reader.onloadend = () => {
+        let url = reader.result;
+      
+        // Condicionamos según una URL existente y no "nula"
+        if(url !=null){
+          // Definimos nombre de la imagen con atributo "name" del input
+          this.nombreImagen = archivo.name;
 
-//VINCULA A BOTON "editar producto"  del modal de "EDITAR"
-editarProducto(){
-  let datos: Producto = {
-    //Solo idProducto rno se modifica por el usuario
-    idProducto: this.productoSeleccionado.idProducto,
-    /* Los demas atributos reciben nueva info desde el formulario */
-    nombre: this.producto.value.nombre!,
-    precio: this.producto.value.precio!,
-    descripcion: this.producto.value.descripcion!,
-    categoria: this.producto.value.categoria!,
-    imagen: this.producto.value.imagen!,
-    alt: this.producto.value.alt!
+          // Definimos ruta de la imagen según la url recibida
+          this.imagen = url.toString();
+        }
+      }
+    }
   }
 
-  this.servicioCrud.modificarProducto(this.productoSeleccionado.idProducto, datos)
-  .then(producto=> {
-    alert("El producto se ha modificado con exito");
+  //funcion vinculada al modal y el boton de la tabla
+  mostrarBorrar(productoSeleccionado: Producto) {
+    this.modalVisibleproducto = true;
 
-    // Resetea el formulario y las casillas quedan vacias
-    this.producto.reset();
-  })
-  .catch(error=> {
-    alert("Hubo un problema al modificar el producto \n"+error)
-  })
-}
+    this.productoSeleccionado = productoSeleccionado;
+  }
+
+  borrarProducto() {
+    this.servicioCrud.eliminarproducto(this.productoSeleccionado.idProducto)
+      .then(respuesta => {
+        alert("se ha podido eliminar con exito");
+      })
+      .catch(error => {
+        alert("Ha ocurrido un error al eliminar un producto: \n" + error)
+      })
+  }
+
+  //EDITAR PRODUCTO
+  mostrarEditar(productoSeleccionado: Producto) {
+    this.productoSeleccionado = productoSeleccionado
+    /*
+    *Tomo los valores del producto seleccionado y los va a
+    *autocompletar en el formulario del modal (menos el ID)
+    */
+    this.producto.setValue({
+      nombre: productoSeleccionado.nombre,
+      precio: productoSeleccionado.precio,
+      descripcion: productoSeleccionado.descripcion,
+      categoria: productoSeleccionado.categoria,
+      imagen: productoSeleccionado.imagen,
+      alt: productoSeleccionado.alt
+    })
+  }
+
+  //VINCULA A BOTON "editar producto"  del modal de "EDITAR"
+  editarProducto() {
+    let datos: Producto = {
+      //Solo idProducto rno se modifica por el usuario
+      idProducto: this.productoSeleccionado.idProducto,
+      /* Los demas atributos reciben nueva info desde el formulario */
+      nombre: this.producto.value.nombre!,
+      precio: this.producto.value.precio!,
+      descripcion: this.producto.value.descripcion!,
+      categoria: this.producto.value.categoria!,
+      imagen: this.producto.value.imagen!,
+      alt: this.producto.value.alt!
+    }
+
+    this.servicioCrud.modificarProducto(this.productoSeleccionado.idProducto, datos)
+      .then(producto => {
+        alert("El producto se ha modificado con exito");
+
+        // Resetea el formulario y las casillas quedan vacias
+        this.producto.reset();
+      })
+      .catch(error => {
+        alert("Hubo un problema al modificar el producto \n" + error)
+      })
+  }
 }
 
