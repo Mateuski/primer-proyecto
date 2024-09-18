@@ -10,6 +10,7 @@ import { CardJuegosComponent } from './components/card-juegos/card-juegos.compon
 import { DlcComponent } from './pages/dlc/dlc.component';
 import { JuegosComponent } from './pages/juegos/juegos.component';
 import { SoporteComponent } from './pages/soporte/soporte.component';
+import { CarruselComponent } from './components/carrusel/carrusel.component';
 
 
 @NgModule({
@@ -19,7 +20,8 @@ import { SoporteComponent } from './pages/soporte/soporte.component';
     CardJuegosComponent,
     JuegosComponent,
     DlcComponent,
-    SoporteComponent
+    SoporteComponent,
+    CarruselComponent
   ],
   imports: [
     CommonModule,

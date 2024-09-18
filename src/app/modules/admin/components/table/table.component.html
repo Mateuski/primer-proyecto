@@ -85,9 +85,16 @@
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Ingrese una imagen:</label>
-                    <input class="form-control" type="text" formControlName="imagen"
-                        placeholder="Ingrese vínculo de una imagen">
+                    <label class="for   m-label">Ingrese una imagen:</label>
+                    <!-- <input class="form-control" type="text" formControlName="imagen"
+                        placeholder="Ingrese vínculo de una imagen"> -->
+                    <!--
+                        type="file" <- recibe archivos
+                        accept="imagen/*" <- acepte todo tipo de extensiones (jpg, jpeg, png, gif)
+                        (change)="cargarImagen($event)" <- ejecuta el evento de cargarImagen que 
+                        definimos en el table.ts
+                      -->
+                    <input type="file" accept="imagen/*" (change)="cargarImagen($event)">
                 </div>
 
                 <div class="mb-3">
@@ -149,8 +156,9 @@
 
                 <div class="mb-3">
                     <label class="form-label">Ingrese una imagen:</label>
-                    <input class="form-control" type="text" formControlName="imagen"
-                        placeholder="{{productoedit.imagen}}">
+                    <!-- <input class="form-control" type="text" formControlName="imagen"
+                        placeholder="{{productoEdit.imagen}}"> -->
+                    <input type="file" accept="imagen/*" (change)="cargarImagen($event)">
                 </div>
 
                 <div class="mb-3">
@@ -172,7 +180,8 @@
 
 
 <!-- MODAL PARA ELIMINAR UN PRODUCTO -->
-<div class="modal fade" *ngIf="modalVisibleproducto" id="eliminarproducto" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" *ngIf="modalVisibleproducto" id="eliminarproducto" tabindex="-1"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -185,7 +194,7 @@
                 {{productoSeleccionado.nombre}}
                 <img src="{{productoSeleccionado.imagen}}" alt="{{productoSeleccionado.alt}}">
             </div>
-s
+            s
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal"
                     (click)="borrarProducto()">Eliminar</button>
