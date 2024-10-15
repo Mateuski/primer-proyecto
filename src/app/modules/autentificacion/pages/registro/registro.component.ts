@@ -26,7 +26,7 @@ export class RegistroComponent {
     nombre: '',
     apellido: '',
     email: '',
-    rol: '',
+    rol: 'vis', // -> todos los usuarios al registrarse seran "visitantes"
     password: ''
   }
 
